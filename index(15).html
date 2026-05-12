@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AlphΩ — Diagnostiquer, remédier, progresser</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1B2A4A;
+    --navy-deep: #0E1A33;
+    --gold: #BC974A;
+    --gold-light: #D4B570;
+    --gold-soft: #F4ECD8;
+    --text: #3D4A66;
+    --muted: #8A95AB;
+    --bg: #FAF7F0;
+    --bg-card: #FFFFFF;
+    --bg-card-cream: #F5EFDF;
+    --bg-card-blue: #EEF1F8;
+    --shadow-soft: 0 2px 12px rgba(27,42,74,0.05);
+    --shadow-hover: 0 16px 40px rgba(27,42,74,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background:
+      radial-gradient(ellipse at 30% 10%, rgba(188,151,74,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 90%, rgba(27,42,74,0.04) 0%, transparent 60%),
+      var(--bg);
+  }
+
+  header {
+    padding: 22px 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-mark {
+    width: 6px;
+    height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+  .header-tag {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .hero {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px;
+    text-align: center;
+    min-height: 0;
+  }
+
+  .hero-title {
+    font-family: 'Montserrat', -apple-system, sans-serif;
+    font-weight: 600;
+    font-size: clamp(75px, 12vw, 155px);
+    color: var(--navy);
+    line-height: 1;
+    letter-spacing: -1.5px;
+    margin-bottom: 22px;
+    min-height: 1em;
+    display: inline-flex;
+    align-items: baseline;
+  }
+  .hero-title .typed { display: inline-block; }
+  .hero-title .typed .om-svg {
+    display: inline-block;
+    height: 0.78em;
+    width: auto;
+    margin-left: 4px;
+    vertical-align: -0.04em;
+  }
+  .hero-title .typed .om-svg path {
+    fill: var(--gold);
+  }
+  .hero-title .cursor {
+    display: inline-block;
+    width: 3px;
+    background: var(--gold);
+    margin-left: 8px;
+    animation: blink 0.9s step-end infinite;
+    height: 0.7em;
+    align-self: center;
+    border-radius: 1px;
+  }
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  .hero-divider {
+    width: 50px;
+    height: 1px;
+    background: var(--gold);
+    margin: 0 auto 22px;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .hero-divider.visible { opacity: 1; }
+
+  .hero-tagline {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: clamp(13px, 1.6vw, 16px);
+    color: var(--navy);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 60px;
+    min-height: 1.4em;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .hero-tagline.visible { opacity: 1; }
+  .hero-tagline .sep {
+    color: var(--gold);
+    margin: 0 14px;
+    font-weight: 400;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    width: 100%;
+    max-width: 1000px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1s ease 0.3s, transform 1s ease 0.3s;
+  }
+  .cards.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .card {
+    border-radius: 8px;
+    padding: 32px 30px 28px;
+    text-align: left;
+    text-decoration: none;
+    color: var(--navy);
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    min-height: 280px;
+    border: 1px solid transparent;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+  }
+  .card:hover::before { transform: scaleX(1); }
+  .card:hover .card-cta { gap: 14px; }
+  .card:hover .card-cta::after { transform: translateX(2px); }
+
+  .card-eleve { background: var(--bg-card-cream); }
+  .card-prof { background: var(--bg-card-blue); }
+  .card-proviseur { background: var(--bg-card); border-color: rgba(188,151,74,0.2); }
+
+  .card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(188,151,74,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+  .card-icon svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .card h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 28px;
+    margin-bottom: 14px;
+    line-height: 1.05;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+  }
+
+  .card-divider {
+    width: 28px;
+    height: 1px;
+    background: var(--gold);
+    margin-bottom: 14px;
+    opacity: 0.6;
+  }
+
+  .card p {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text);
+    margin-bottom: 26px;
+    flex: 1;
+    font-weight: 400;
+  }
+
+  .card-cta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--navy);
+    transition: gap 0.3s ease;
+  }
+  .card-cta::after {
+    content: "→";
+    font-size: 16px;
+    color: var(--gold);
+    transition: transform 0.3s ease;
+  }
+
+  footer {
+    padding: 18px 44px;
+    text-align: center;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+  footer .gold-dot {
+    color: var(--gold);
+    margin: 0 10px;
+  }
+
+  @media (max-width: 880px) {
+    html, body { overflow: auto; }
+    .cards {
+      grid-template-columns: 1fr;
+      max-width: 460px;
+      gap: 14px;
+    }
+    .card {
+      min-height: 0;
+      padding: 26px 24px 22px;
+    }
+    .card h2 { font-size: 26px; }
+    header { padding: 18px 22px; }
+    footer { padding: 16px 22px; }
+    .hero-tagline { letter-spacing: 2px; margin-bottom: 36px; }
+  }
+
+  @media (max-height: 760px) {
+    .hero-title { font-size: clamp(60px, 9vw, 110px); margin-bottom: 16px; }
+    .hero-divider { margin-bottom: 16px; }
+    .hero-tagline { margin-bottom: 36px; letter-spacing: 3px; }
+    .card { min-height: 230px; padding: 26px 26px 22px; }
+    .card-icon { width: 40px; height: 40px; margin-bottom: 18px; }
+    .card-icon svg { width: 20px; height: 20px; }
+    .card h2 { font-size: 26px; margin-bottom: 10px; }
+    .card-divider { margin-bottom: 12px; }
+    .card p { font-size: 13px; margin-bottom: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="header-mark"></span>
+  <span class="header-tag">AlphΩ — Outil de remédiation mathématiques</span>
+</header>
+
+<main class="hero">
+  <h1 class="hero-title">
+    <span class="typed" id="typed"></span><span class="cursor"></span>
+  </h1>
+  <div class="hero-divider" id="divider"></div>
+  <div class="hero-tagline" id="tagline">
+    Diagnostiquer<span class="sep">·</span>Remédier<span class="sep">·</span>Progresser
+  </div>
+
+  <div class="cards" id="cards">
+
+    <a href="https://arnaudreydellet.github.io/espace-eleve/" class="card card-eleve">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
+      <h2>Élève</h2>
+      <div class="card-divider"></div>
+      <p>Passe ton diagnostic et accède à tes fiches de remédiation pour combler tes lacunes à ton rythme.</p>
+      <span class="card-cta">Se connecter</span>
+    </a>
+
+    <a href="https://arnaudreydellet.github.io/espace-professeurs/" class="card card-prof">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg>
+      </div>
+      <h2>Professeur</h2>
+      <div class="card-divider"></div>
+      <p>Suivez vos élèves, identifiez les lacunes, assignez les fiches automatiquement.</p>
+      <span class="card-cta">Se connecter</span>
+    </a>
+
+    <a href="https://arnaudreydellet.github.io/espace-proviseur/" class="card card-proviseur">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+      </div>
+      <h2>Proviseur</h2>
+      <div class="card-divider"></div>
+      <p>Pilotez votre établissement avec un tableau de bord complet par classe.</p>
+      <span class="card-cta">Se connecter</span>
+    </a>
+
+  </div>
+</main>
+
+<footer>
+  AlphΩ <span class="gold-dot">·</span> Établissements scolaires <span class="gold-dot">·</span> 2026
+</footer>
+
+<script>
+  const titleChars = ["A", "l", "p", "h", "Ω"];
+  const typedEl = document.getElementById('typed');
+  const dividerEl = document.getElementById('divider');
+  const taglineEl = document.getElementById('tagline');
+  const cardsEl = document.getElementById('cards');
+
+  let i = 0;
+  function typeChar() {
+    if (i < titleChars.length) {
+      const c = titleChars[i];
+      if (c === 'Ω') {
+        // Ω voûte ronde + pieds horizontaux droits, légèrement écartés (pas triangulaires)
+        typedEl.innerHTML += '<svg class="om-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"><path d="M 50 6 C 25 6, 14 26, 14 48 C 14 64, 22 75, 30 81 L 8 81 L 8 94 L 40 94 L 40 81 L 36 81 C 29 75, 24 65, 24 50 C 24 32, 35 20, 50 20 C 65 20, 76 32, 76 50 C 76 65, 71 75, 64 81 L 60 81 L 60 94 L 92 94 L 92 81 L 70 81 C 78 75, 86 64, 86 48 C 86 26, 75 6, 50 6 Z"/></svg>';
+      } else {
+        typedEl.innerHTML += c;
+      }
+      i++;
+      setTimeout(typeChar, 200);
+    } else {
+      setTimeout(() => dividerEl.classList.add('visible'), 250);
+      setTimeout(() => taglineEl.classList.add('visible'), 500);
+      setTimeout(() => cardsEl.classList.add('visible'), 900);
+    }
+  }
+  setTimeout(typeChar, 500);
+</script>
+
+</body>
+</html>
